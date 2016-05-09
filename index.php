@@ -21,7 +21,12 @@ $serviceFactory = new \OAuth\ServiceFactory();
 /** @var $twitch Twitch */
 $twitch = $serviceFactory->createService('Twitch', $credentials, $storage, array(Twitch::SCOPE_CHANNEL_FEED_READ, Twitch::SCOPE_USER_READ));
 
-if (!empty($_GET['code']) || $storage->hasAccessToken('Twitch')) {
+if (isset($_POST['logout'])) {
+    $storage->clearToken('Twitch');
+    $url = $currentUri->getRelativeUri() . '?go=go';
+    echo '<p>Logged out. <a href="'.$url.'">Log in again</a></p>';
+}
+else if (!empty($_GET['code']) || $storage->hasAccessToken('Twitch')) {
     if(!$storage->hasAccessToken('Twitch')) {
         // This was a callback request from twitch, get the token
         $twitch->requestAccessToken($_GET['code']);
@@ -47,7 +52,7 @@ if (!empty($_GET['code']) || $storage->hasAccessToken('Twitch')) {
         return strtotime($r['created_at']) - strtotime($l['created_at']);
     });
 
-    echo '<h1>Channel Feeds</h1><p>Note: this only works for the first hundred followed channels</p>';
+    echo '<h1>Channel Feeds</h1><p>Note: this only works for the first hundred followed channels</p><form method="POST"><button name="logout" value="true" type="submit">Logout</button></form>';
     echo '<ul>';
     foreach($posts as $post) {
         echo '<li><q>'.$post['body'].'</q> <cite><a href="https://twitch.tv/'.$post['user']['name'].'">'.$post['user']['display_name'].'</a></cite> (<time datetime="'.$post['created_at'].'">'.date('D j.M Y', strtotime($post['created_at'])).'</time>)</li>';
