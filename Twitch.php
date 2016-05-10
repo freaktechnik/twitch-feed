@@ -88,7 +88,6 @@ class Twitch extends AbstractService
         TokenStorageInterface $storage,
         $scopes = array(),
         UriInterface $baseApiUri = null,
-        $stateParameterInAutUrl = true,
         $apiVersion = "v3"
     ) {
         parent::__construct(
@@ -97,7 +96,7 @@ class Twitch extends AbstractService
             $storage,
             $scopes,
             $baseApiUri,
-            $stateParameterInAutUrl,
+            true,
             $apiVersion
         );
 

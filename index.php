@@ -19,19 +19,21 @@ $credentials = new Credentials(
 $serviceFactory = new \OAuth\ServiceFactory();
 
 /** @var $twitch Twitch */
-$twitch = $serviceFactory->createService('Twitch', $credentials, $storage, array(Twitch::SCOPE_CHANNEL_FEED_READ, Twitch::SCOPE_USER_READ));
+$twitch = $serviceFactory->createService('Twitch', $credentials, $storage, array('channel_feed_read', 'user_read'));
 
 if (isset($_POST['logout'])) {
     $storage->clearToken('Twitch');
     $url = $currentUri->getRelativeUri() . '?go=go';
     echo '<p>Logged out. <a href="'.$url.'">Log in again</a></p>';
 }
-else if (!empty($_GET['code']) || $storage->hasAccessToken('Twitch')) {
-    if(!$storage->hasAccessToken('Twitch')) {
-        // This was a callback request from twitch, get the token
-        $twitch->requestAccessToken($_GET['code']);
-    }
-
+else if (!empty($_GET['code'])) {
+    // This was a callback request from twitch, get the token
+    $state = isset($_GET['state']) ? $_GET['state'] : null;
+    $twitch->requestAccessToken($_GET['code'], $state);
+    $url = $currentUri->getAbsoluteUri();
+    header('Location: '.$url);
+}
+else if($storage->hasAccessToken('Twitch')) {
     $token = json_decode($twitch->request(''), true);
     $username = $token['token']['user_name'];
 
