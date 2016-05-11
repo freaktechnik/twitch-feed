@@ -43,3 +43,15 @@
 .mprogress-custom-parent .ui-mprogress .indeter-bar {
     background: white;
 }
+
+.reactions .reaction img {
+    max-height: 16px;
+}
+
+.reactions .reaction b {
+    font-weight: inherit;
+}
+
+q::before, q::after {
+    content: "";
+}

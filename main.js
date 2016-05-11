@@ -32,6 +32,29 @@ const getFeed = (username) => {
         .then((posts) => posts.sort((a, b) => b.date - a.date));
 };
 
+const EMOTE_SIZES = [ "1.0", "2.0", "3.0" ];
+const EMOTE_BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/";
+const Emote = (props) => {
+    const emoteUrl = EMOTE_BASE_URL + props.emoteId + "/";
+    const urls = EMOTE_SIZES.map((s, i) => emoteUrl + s + " " + i + "x");
+    return (
+        <img src={ emoteUrl+"1.0" } srcset={ urls.join(",") } alt={ props.sourceText } title={ props.sourceText } />
+    );
+};
+
+const Reaction = (props) => (
+    <li className="reaction"><Emote emoteId={ props.emoteId } sourceText={ props.emote } />&nbsp;<b className="mui--text-dark-secondary">{ props.count }</b></li>
+);
+
+const Reactions = (props) => {
+    const reactions = props.reactions.map((r) => (<Reaction emoteId={ r.key } emote={ r.emote } count={ r.count } key={ r.key } />));
+    return (
+        <ul className="mui-list--inline reactions">
+            { reactions }
+        </ul>
+    );
+};
+
 const Timestamp = (props) => (
     <time datetime={ props.date } title ={ new Date(props.date).toLocaleString() } className={ props.className }>{ moment(props.date).fromNow() }</time>
 );
@@ -64,15 +87,48 @@ const Message = (props) => (
             <Timestamp date={ props.date } className="mui--pull-right mui--text-dark-secondary" />
         </header>
         <q>{ props.children }</q>
+        <Reactions reactions={ props.reactions } />
     </Panel>
 );
 
+const MAX_REACTIONS = 9;
 const MessageFeed = (props) => {
-    var messages = props.messages.map((message) => (
-        <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id }>
-            <MessageBody body={ message.body } />
-        </Message>
-    ));
+    var messages = props.messages.map((message) => {
+        let reactions = Object.keys(message.reactions).map((k) => {
+            let id = parseInt(k, 10);
+            if(k == "endorse")
+                id = 1;
+
+            let reaction = message.reactions[k];
+            reaction.key = id;
+            return reaction;
+        });
+        if(reactions.length == 0) {
+            reactions = [
+                {
+                    key: 1,
+                    emote: "endorse",
+                    count: 0
+                }
+            ];
+        }
+        else {
+            reactions = reactions.sort((a, b) => {
+                console.log(a.emote);
+                if(a.emote == "endorse")
+                    return Number.MIN_SAFE_INTEGER;
+                else if(b.emote == "endorse")
+                    return Number.MAX_SAFE_INTEGER;
+                else
+                    return b.count - a.count;
+            });
+        }
+        return (
+            <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
+                <MessageBody body={ message.body } />
+            </Message>
+        )
+    });
 
     var msg = "";
     if(!props.messages.length) {
