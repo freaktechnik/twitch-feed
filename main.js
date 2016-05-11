@@ -51,24 +51,50 @@ const MessageFeed = (props) => {
     ));
 
     var msg = "";
-    if(props.loading) {
-        msg = "Loading...";
-    }
-    else if(!props.messages.length) {
+    if(!props.messages.length) {
         msg = "No channel feed messages from any followed channel for the current user";
     }
-    var loading = msg != "" ? (<p className="mui--text-subhead mui--text-dark-secondary mui--text-center">{ msg }</p>) : "";
+    var info = msg != "" ? (<p className="mui--text-subhead mui--text-dark-secondary mui--text-center">{ msg }</p>) : "";
 
     return (
         <Container>
             <main>
                 <div className="space"></div>
-                { loading }
+                { info }
                 { messages }
             </main>
         </Container>
     );
 };
+
+class ProgressBar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.progress = new Mprogress({
+            template: this.props.template,
+            parent: "#" + this.props.parentId,
+            start: this.props.running
+        });
+    }
+
+    static get defaultProps() {
+        return {
+            template: 1,
+            parentId: "progress",
+            running: false
+        };
+    }
+    render() {
+        if(this.props.running)
+            this.progress.start();
+        else
+            this.progress.end();
+
+        return (
+            <div id={ this.props.parentId }></div>
+        );
+    }
+}
 
 const Header = (props) => (
 <Appbar className="mui--z1 sticky-appbar">
@@ -79,6 +105,7 @@ const Header = (props) => (
             <Button type="submit">Load</Button>
         </Form>
     </Container>
+    <ProgressBar running={ props.loading } template={3} />
 </Appbar>);
 
 class Page extends React.Component {
@@ -92,6 +119,11 @@ class Page extends React.Component {
             this.setState(e.state);
         });
 
+        this.progress = new Mprogress({
+            template: 4,
+            parent: "#progress"
+        });
+
         setInterval(this.componentDidMount.bind(this), this.props.pollInterval);
     }
     componentDidMount() {
@@ -102,14 +134,9 @@ class Page extends React.Component {
         this.setState({ usernameValue: e.target.value });
     }
     setData(data) {
-        let newState = {
-            loading: false
-        }
-        if(data !== null)
-            newState.data = data;
-
-        this.setState(newState);
         if(data !== null) {
+            this.setState({ data, loading: false });
+
             if(history.state.usernameValue != this.state.usernameValue)
                 history.pushState(this.state, this.state.usernameValue, window.location.toString());
 
@@ -117,6 +144,9 @@ class Page extends React.Component {
                 document.title = document.title.replace(/\-\s.+$/, "- " + this.state.usernameValue);
             else
                 document.title = document.title + " - " + this.state.usernameValue;
+        }
+        else {
+            this.setState({ loading: false });
         }
     }
     handleRefresh(e) {
@@ -136,8 +166,8 @@ class Page extends React.Component {
     render() {
         return (
             <div>
-                <Header title="Consolidated Twitch Channel Feed" username={ this.state.usernameValue } onChange={ this.handleKeypress } onSubmit={ this.handleRefresh }/>
-                <MessageFeed loading={ this.state.loading } messages={ this.state.data } />
+                <Header title="Consolidated Twitch Channel Feed" username={ this.state.usernameValue } onChange={ this.handleKeypress } onSubmit={ this.handleRefresh } loading={ this.state.loading } />
+                <MessageFeed messages={ this.state.data } />
                 <footer className="main-footer">
                     <Container className="mui--text-center mui--text-light-secondary">
                         <a href="https://reactjs.com">React</a> thing with <a href="https://www.muicss.com">MUICSS</a>. Source code on <a href="https://github.com/freaktechnik/twitch-feed">GitHub</a>.

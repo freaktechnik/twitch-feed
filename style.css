@@ -32,3 +32,13 @@
     background-color: #bbb;
     padding: 10px 0;
 }
+
+.mprogress-custom-parent {
+    width: 100%;
+    overflow: visible;
+    top: -3px;
+}
+
+.mprogress-custom-parent .ui-mprogress .indeter-bar {
+    background: white;
+}
