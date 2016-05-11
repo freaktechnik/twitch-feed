@@ -137,7 +137,7 @@ class Page extends React.Component {
         if(data !== null) {
             this.setState({ data, loading: false });
 
-            if(history.state.usernameValue != this.state.usernameValue)
+            if(!history.state || history.state.usernameValue != this.state.usernameValue)
                 history.pushState(this.state, this.state.usernameValue, window.location.toString());
 
             if(document.title.includes("-"))
