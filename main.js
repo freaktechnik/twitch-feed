@@ -32,12 +32,36 @@ const getFeed = (username) => {
         .then((posts) => posts.sort((a, b) => b.date - a.date));
 };
 
+const Timestamp = (props) => (
+    <time datetime={ props.date } title ={ new Date(props.date).toLocaleString() } className={ props.className }>{ moment(props.date).fromNow() }</time>
+);
+
+const Author = (props) => (
+    <cite><a href={ "https://twitch.tv/" + props.slug }>{ props.author }</a></cite>
+);
+
+const AVATAR_SIZES = [ 50, 70, 150, 300, 600 ];
+const Avatar = (props) => {
+    const srcs = AVATAR_SIZES.map((s) => props.src.replace("300x300", s+"x"+s) + " "+s+"w");
+    return (
+        <img height={ props.height } width={ props.width } src={ props.src } srcset={ srcs.join(",") } sizes={ props.width + "w" } className={ props.className } />
+    );
+};
+
+class MessageBody extends React.Component {
+    render() {
+        return (
+            <span>{ ReactAutolink.autolink(this.props.body, { rel: "nofollow" }) }</span>
+        );
+    }
+}
+
 const Message = (props) => (
     <Panel>
         <header>
-            <img height="70" width="70" className="mui--pull-left message-img" src={ props.avatar || "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png" } />
-            <cite><a href={ "https://twitch.tv/" + props.authorName }>{ props.author }</a></cite>
-            <time datetime={ props.date } title={ new Date(props.date).toLocaleString() } className="mui--pull-right mui--text-dark-secondary">{ moment(props.date).fromNow() }</time>
+            <Avatar height="70" width="70" className="mui--pull-left message-img" src={ props.avatar || "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png" } />
+            <Author slug={ props.authorName } author={ props.author } />
+            <Timestamp date={ props.date } className="mui--pull-right mui--text-dark-secondary" />
         </header>
         <q>{ props.children }</q>
     </Panel>
@@ -46,7 +70,7 @@ const Message = (props) => (
 const MessageFeed = (props) => {
     var messages = props.messages.map((message) => (
         <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id }>
-            { message.body }
+            <MessageBody body={ message.body } />
         </Message>
     ));
 
