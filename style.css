@@ -27,3 +27,8 @@
     position: sticky;
     top: 0px;
 }
+
+.main-footer {
+    background-color: #bbb;
+    padding: 10px 0;
+}

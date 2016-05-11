@@ -138,6 +138,11 @@ class Page extends React.Component {
             <div>
                 <Header title="Consolidated Twitch Channel Feed" username={ this.state.usernameValue } onChange={ this.handleKeypress } onSubmit={ this.handleRefresh }/>
                 <MessageFeed loading={ this.state.loading } messages={ this.state.data } />
+                <footer className="main-footer">
+                    <Container className="mui--text-center mui--text-light-secondary">
+                        <a href="https://reactjs.com">React</a> thing with <a href="https://www.muicss.com">MUICSS</a>. Source code on <a href="https://github.com/freaktechnik/twitch-feed">GitHub</a>.
+                    </Container>
+                </footer>
             </div>
         );
     }
