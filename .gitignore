@@ -1,3 +1,5 @@
 /vendor/
 config.php
 *~
+build/
+bower_components/

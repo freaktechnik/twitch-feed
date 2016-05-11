@@ -1,0 +1,29 @@
+
+
+.navbar-form input {
+    color: white;
+}
+
+.navbar-form .mui-textfield > input:focus {
+    border-color: white;
+}
+
+.navbar-form .mui-btn {
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.space {
+    height: 20px;
+}
+
+.message-img {
+    margin-right: 15px;
+    height: 70px;
+    width: 70px;
+}
+
+.sticky-appbar {
+    position: sticky;
+    top: 0px;
+}
