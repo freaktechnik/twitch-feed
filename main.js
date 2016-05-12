@@ -13,21 +13,37 @@ const Appbar = mui.react.Appbar,
       Panel = mui.react.Panel;
 
 //TODO paginate
-const getFeed = (username) => {
-    return fetch("https://api.twitch.tv/kraken/users/" + username + "/follows/channels", opts)
+const FOLLOWS_LIMIT = 100;
+const getFollows = (username, page = 1) => {
+    return fetch("https://api.twitch.tv/kraken/users/" + username.toLowerCase() + "/follows/channels?limit="+FOLLOWS_LIMIT+"&offset="+((page-1)*FOLLOWS_LIMIT), opts)
         .then((response) => response.json())
-        .then((json) => Promise.all(json.follows.map((follow) => fetch("https://api.twitch.tv/kraken/feed/" + follow.channel.name + "/posts", opts).then((response) => response.json(), () => []))))
-        .then((rawPosts) => rawPosts.map((json) => {
-            if(json.posts && json.posts.length) {
-                return json.posts.map(function(post) {
+        .then((json) => {
+            if(json._total > page * FOLLOWS_LIMIT) {
+                return getFollows(username, page + 1).then((follows) => {
+                    return json.follows.concat(follows);
+                });
+            }
+            return json.follows;
+        });
+};
+const getPosts = (username) => {
+    return fetch("https://api.twitch.tv/kraken/feed/" + username + "/posts", opts)
+        .then((response) => response.json(), () => ({ posts: [] }))
+        .then((json) => {
+            if("error" in json) {
+                return [];
+            }
+            else {
+                return json.posts.map((post) => {
                     post.date = Date.parse(post.created_at);
                     return post;
                 });
             }
-            else {
-                return [];
-            }
-        }))
+        });
+};
+const getFeed = (username) => {
+    return getFollows(username)
+        .then((follows) => Promise.all(follows.map((follow) => getPosts(follow.channel.name))))
         .then((posts) => [].concat(...posts))
         .then((posts) => posts.sort((a, b) => b.date - a.date));
 };
