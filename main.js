@@ -36,9 +36,9 @@ const EMOTE_SIZES = [ "1.0", "2.0", "3.0" ];
 const EMOTE_BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/";
 const Emote = (props) => {
     const emoteUrl = EMOTE_BASE_URL + props.emoteId + "/";
-    const urls = EMOTE_SIZES.map((s, i) => emoteUrl + s + " " + i + "x");
+    const urls = EMOTE_SIZES.map((s, i) => emoteUrl + s + " " + (i+1) + "x");
     return (
-        <img src={ emoteUrl+"1.0" } srcset={ urls.join(",") } alt={ props.sourceText } title={ props.sourceText } />
+        <img src={ emoteUrl+"1.0" } srcSet={ urls.join(",") } alt={ props.sourceText } title={ props.sourceText } />
     );
 };
 
@@ -67,10 +67,11 @@ const AVATAR_SIZES = [ 50, 70, 150, 300, 600 ];
 const Avatar = (props) => {
     const srcs = AVATAR_SIZES.map((s) => props.src.replace("300x300", s+"x"+s) + " "+s+"w");
     return (
-        <img height={ props.height } width={ props.width } src={ props.src } srcset={ srcs.join(",") } sizes={ props.width + "w" } className={ props.className } />
+        <img height={ props.height } width={ props.width } src={ props.src } srcSet={ srcs.join(",") } sizes={ props.width + "w" } className={ props.className } />
     );
 };
 
+//TODO put emotes in there and only autolink the stuff between emotes
 class MessageBody extends React.Component {
     render() {
         return (
