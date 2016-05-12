@@ -139,44 +139,49 @@ const Message = (props) => (
 
 const MAX_REACTIONS = 9;
 const MessageFeed = (props) => {
-    var messages = props.messages.map((message) => {
-        let reactions = Object.keys(message.reactions).map((k) => {
-            let id = parseInt(k, 10);
-            if(k == "endorse")
-                id = 1;
+    if(props.messages) {
+        var messages = props.messages.map((message) => {
+            let reactions = Object.keys(message.reactions).map((k) => {
+                let id = parseInt(k, 10);
+                if(k == "endorse")
+                    id = 1;
 
-            let reaction = message.reactions[k];
-            reaction.key = id;
-            return reaction;
-        });
-        if(reactions.length == 0) {
-            reactions = [
-                {
-                    key: 1,
-                    emote: "endorse",
-                    count: 0
-                }
-            ];
-        }
-        else {
-            reactions = reactions.sort((a, b) => {
-                if(a.emote == "endorse")
-                    return Number.MIN_SAFE_INTEGER;
-                else if(b.emote == "endorse")
-                    return Number.MAX_SAFE_INTEGER;
-                else
-                    return b.count - a.count;
+                let reaction = message.reactions[k];
+                reaction.key = id;
+                return reaction;
             });
-        }
-        return (
-            <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
-                <MessageBody body={ message.body } emotes={ message.emotes } />
-            </Message>
-        )
-    });
+            if(reactions.length == 0) {
+                reactions = [
+                    {
+                        key: 1,
+                        emote: "endorse",
+                        count: 0
+                    }
+                ];
+            }
+            else {
+                reactions = reactions.sort((a, b) => {
+                    if(a.emote == "endorse")
+                        return Number.MIN_SAFE_INTEGER;
+                    else if(b.emote == "endorse")
+                        return Number.MAX_SAFE_INTEGER;
+                    else
+                        return b.count - a.count;
+                });
+            }
+            return (
+                <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
+                    <MessageBody body={ message.body } emotes={ message.emotes } />
+                </Message>
+            )
+        });
+    }
 
     var msg = "";
-    if(!props.messages.length) {
+    if(props.messages === null) {
+        msg = "User is not known to Twitch";
+    }
+    else if(!props.messages.length) {
         msg = "No channel feed messages from any followed channel for the current user";
     }
     var info = msg != "" ? (<p className="mui--text-subhead mui--text-dark-secondary mui--text-center">{ msg }</p>) : "";
@@ -238,55 +243,56 @@ class Page extends React.Component {
         super(props);
         this.handleKeypress = this.handleKeypress.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
-        this.state = history.state || { data: [], usernameValue: "", loading: false };
+        this.state = history.state || { data: [], usernameValue: "", loading: false, loadingUsername: "" };
+        this.state.loadingUsername = this.state.usernameValue;
 
         window.addEventListener("popstate", (e) => {
             this.setState(e.state);
         });
 
-        this.progress = new Mprogress({
-            template: 4,
-            parent: "#progress"
-        });
-
-        setInterval(this.componentDidMount.bind(this), this.props.pollInterval);
+        setInterval(() => {
+            this.refresh(this.state.loadingUsername);
+        }, this.props.pollInterval);
     }
     componentDidMount() {
         if(this.state.usernameValue != "")
-            this.handleRefresh({preventDefault: () => {}});
+            this.refresh(this.state.usernameValue);
     }
     handleKeypress(e) {
         this.setState({ usernameValue: e.target.value });
     }
     setData(data) {
+        this.setState({ data, loading: false });
         if(data !== null) {
-            this.setState({ data, loading: false });
+            if(!history.state || history.state.loadingUsername != this.state.loadingUsername)
+                history.pushState(this.state, this.state.loadingUsername, window.location.toString());
 
-            if(!history.state || history.state.usernameValue != this.state.usernameValue)
-                history.pushState(this.state, this.state.usernameValue, window.location.toString());
-
-            if(document.title.includes("-"))
-                document.title = document.title.replace(/\-\s.+$/, "- " + this.state.usernameValue);
+            if(document.title.includes(" - "))
+                document.title = document.title.replace(/\-\s.+$/, "- " + this.state.loadingUsername);
             else
-                document.title = document.title + " - " + this.state.usernameValue;
-        }
-        else {
-            this.setState({ loading: false });
+                document.title = document.title + " - " + this.state.loadingUsername;
         }
     }
-    handleRefresh(e) {
-        e.preventDefault();
-        if(this.state.usernameValue != "") {
-            this.setState({ loading: true });
-            getFeed(this.state.usernameValue).then((messages) => {
+    refresh(username) {
+        if(username != "") {
+            this.setState({ loading: true, loadingUsername: username });
+            getFeed(username).then((messages) => {
+                if(this.state.loadingUsername != username)
+                    return;
                 this.setData(messages);
             }, () => {
+                if(this.state.loadingUsername != username)
+                    return;
                 this.setData(null);
             });
         }
         else {
             this.setData([]);
         }
+    }
+    handleRefresh(e) {
+        e.preventDefault();
+        this.refresh(this.state.usernameValue);
     }
     render() {
         return (
