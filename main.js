@@ -71,14 +71,43 @@ const Avatar = (props) => {
     );
 };
 
-//TODO put emotes in there and only autolink the stuff between emotes
-class MessageBody extends React.Component {
-    render() {
-        return (
-            <span>{ ReactAutolink.autolink(this.props.body, { rel: "nofollow" }) }</span>
-        );
-    }
-}
+const MessageBody = (props) => {
+    let msg = [props.body];
+    let offset = 0;
+    props.emotes.sort((a, b) => {
+        return a.start - b.start;
+    }).forEach((emote) => {
+        const initialMsg = msg[msg.length-1];
+        if(emote.start > 0)
+            msg[msg.length-1] = initialMsg.substring(0, emote.start + offset);
+        else
+            msg = [];
+
+        const emoteName = initialMsg.substring(emote.start + offset, emote.end + offset + 1);
+        msg.push(<Emote emoteId={ emote.id } sourceText={ emoteName } />);
+
+        msg.push(initialMsg.substring(emote.end + offset + 1));
+
+        if(emote.start > 0)
+            offset -= msg[msg.length - 3].length;
+        offset -= emoteName.length;
+    });
+
+    const linkOpts = { rel: "nofollow" };
+    const finalMsg = msg.reduce((p, c) => {
+        if(typeof c === "string") {
+            p.push(...ReactAutolink.autolink(c, linkOpts));
+        }
+        else {
+            p.push(c);
+        }
+        return p;
+    }, []);
+
+    return (
+        <span>{ finalMsg }</span>
+    );
+};
 
 const Message = (props) => (
     <Panel>
@@ -115,7 +144,6 @@ const MessageFeed = (props) => {
         }
         else {
             reactions = reactions.sort((a, b) => {
-                console.log(a.emote);
                 if(a.emote == "endorse")
                     return Number.MIN_SAFE_INTEGER;
                 else if(b.emote == "endorse")
@@ -126,7 +154,7 @@ const MessageFeed = (props) => {
         }
         return (
             <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
-                <MessageBody body={ message.body } />
+                <MessageBody body={ message.body } emotes={ message.emotes } />
             </Message>
         )
     });
