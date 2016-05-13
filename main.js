@@ -268,7 +268,7 @@ class ProgressBar extends React.Component {
 
     static get propTypes() {
         return {
-            running: React.PropTypes.bool.isRequired,
+            running: React.PropTypes.bool,
             parentId: React.PropTypes.string,
             template: React.PropTypes.number
         };
@@ -307,7 +307,7 @@ const Header = (props) => (
 Header.propTypes = {
     onSubmit: React.PropTypes.func,
     onChange: React.PropTypes.func,
-    loading: React.PropTypes.bool.isRequired,
+    loading: React.PropTypes.bool,
     username: React.PropTypes.string,
     title: React.PropTypes.node.isRequired
 };
