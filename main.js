@@ -108,7 +108,7 @@ const AVATAR_SIZES = [ 50, 70, 150, 300, 600 ];
 const Avatar = (props) => {
     const srcs = AVATAR_SIZES.map((s) => props.src.replace("300x300", s+"x"+s) + " "+s+"w");
     return (
-        <img height={ props.height } width={ props.width } src={ props.src } srcSet={ srcs.join(",") } sizes={ props.width + "w" } className={ props.className } />
+        <img height={ props.height } width={ props.width } src={ props.src } srcSet={ srcs.join(",") } sizes={ props.width + "px" } className={ props.className } />
     );
 };
 Avatar.propTypes = {
