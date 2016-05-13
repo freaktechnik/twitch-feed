@@ -320,6 +320,10 @@ class Page extends React.Component {
         this.state = history.state || { data: [], usernameValue: "", loading: false, loadingUsername: "" };
         this.state.loadingUsername = this.state.usernameValue;
 
+        document.title = props.title;
+        if(this.state.loadingUsername != "")
+            document.title = document.title + " - " + this.state.loadingUsername;
+
         window.addEventListener("popstate", (e) => {
             this.setState(e.state);
         });
@@ -331,7 +335,8 @@ class Page extends React.Component {
 
     static get propTypes() {
         return {
-            pollInterval: React.PropTypes.number.isRequired
+            pollInterval: React.PropTypes.number.isRequired,
+            title: React.PropTypes.string.isRequired
         };
     }
 
@@ -380,7 +385,7 @@ class Page extends React.Component {
     render() {
         return (
             <div>
-                <Header title="Consolidated Twitch Channel Feed" username={ this.state.usernameValue } onChange={ this.handleKeypress } onSubmit={ this.handleRefresh } loading={ this.state.loading } />
+                <Header title={ this.props.title } username={ this.state.usernameValue } onChange={ this.handleKeypress } onSubmit={ this.handleRefresh } loading={ this.state.loading } />
                 <MessageFeed messages={ this.state.data } />
                 <footer className="main-footer">
                     <Container className="mui--text-center mui--text-light-secondary">
@@ -392,5 +397,5 @@ class Page extends React.Component {
     }
 }
 
-ReactDOM.render(<Page pollInterval={120000}/>, document.getElementById("content"));
+ReactDOM.render(<Page pollInterval={120000} title="Consolidated Twitch Channel Feed"/>, document.getElementById("content"));
 
