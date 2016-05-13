@@ -12,7 +12,12 @@ const Appbar = mui.react.Appbar,
       Input = mui.react.Input,
       Panel = mui.react.Panel;
 
-//TODO paginate
+const REACTION_SHAPE = React.PropTypes.shape({
+    key: React.PropTypes.number.isRequired,
+    emote: React.PropTypes.string,
+    count: React.PropTypes.number.isRequired
+});
+
 const FOLLOWS_LIMIT = 100;
 const getFollows = (username, page = 1) => {
     return fetch("https://api.twitch.tv/kraken/users/" + username.toLowerCase() + "/follows/channels?limit="+FOLLOWS_LIMIT+"&offset="+((page-1)*FOLLOWS_LIMIT), opts)
@@ -57,10 +62,19 @@ const Emote = (props) => {
         <img src={ emoteUrl+"1.0" } srcSet={ urls.join(",") } alt={ props.sourceText } title={ props.sourceText } />
     );
 };
+Emote.propTypes = {
+    emoteId: React.PropTypes.number.isRequired,
+    sourceText: React.PropTypes.string
+};
 
 const Reaction = (props) => (
     <li className="reaction"><Emote emoteId={ props.emoteId } sourceText={ props.emote } />&nbsp;<b className="mui--text-dark-secondary">{ props.count }</b></li>
 );
+Reaction.propTypes = {
+    emoteId: React.PropTypes.number.isRequired,
+    emote: React.PropTypes.string,
+    count: React.PropTypes.number.isRequired
+};
 
 const Reactions = (props) => {
     const reactions = props.reactions.map((r) => (<Reaction emoteId={ r.key } emote={ r.emote } count={ r.count } key={ r.key } />));
@@ -70,14 +84,25 @@ const Reactions = (props) => {
         </ul>
     );
 };
+Reactions.propTypes = {
+    reactions: React.PropTypes.arrayOf(REACTION_SHAPE).isRequired
+};
 
 const Timestamp = (props) => (
     <time datetime={ props.date } title ={ new Date(props.date).toLocaleString() } className={ props.className }>{ moment(props.date).fromNow() }</time>
 );
+Timestamp.propTypes = {
+    date: React.PropTypes.number.isRequired,
+    className: React.PropTypes.string
+};
 
 const Author = (props) => (
     <cite><a href={ "https://twitch.tv/" + props.slug }>{ props.author }</a></cite>
 );
+Author.propTypes = {
+    slug: React.PropTypes.string.isRequired,
+    author: React.PropTypes.string.isRequired
+};
 
 const AVATAR_SIZES = [ 50, 70, 150, 300, 600 ];
 const Avatar = (props) => {
@@ -85,6 +110,12 @@ const Avatar = (props) => {
     return (
         <img height={ props.height } width={ props.width } src={ props.src } srcSet={ srcs.join(",") } sizes={ props.width + "w" } className={ props.className } />
     );
+};
+Avatar.propTypes = {
+    height: React.PropTypes.number,
+    width: React.PropTypes.number.isRequired,
+    src: React.PropTypes.string.isRequired,
+    className: React.PropTypes.string
 };
 
 const MessageBody = (props) => {
@@ -124,11 +155,15 @@ const MessageBody = (props) => {
         <span>{ finalMsg }</span>
     );
 };
+MessageBody.propTypes = {
+    body: React.PropTypes.string.isRequired,
+    emotes: React.PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.number)).isRequired
+};
 
 const Message = (props) => (
     <Panel>
         <header>
-            <Avatar height="70" width="70" className="mui--pull-left message-img" src={ props.avatar || "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png" } />
+            <Avatar height={70} width={70} className="mui--pull-left message-img" src={ props.avatar || "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png" } />
             <Author slug={ props.authorName } author={ props.author } />
             <Timestamp date={ props.date } className="mui--pull-right mui--text-dark-secondary" />
         </header>
@@ -136,6 +171,13 @@ const Message = (props) => (
         <Reactions reactions={ props.reactions } />
     </Panel>
 );
+Message.propTypes = {
+    avatar: React.PropTypes.string,
+    authorName: React.PropTypes.string.isRequired,
+    author: React.PropTypes.string.isRequired,
+    date: React.PropTypes.number.isRequired,
+    reactions: React.PropTypes.arrayOf(REACTION_SHAPE).isRequired
+};
 
 const MAX_REACTIONS = 9;
 const MessageFeed = (props) => {
@@ -196,6 +238,23 @@ const MessageFeed = (props) => {
         </Container>
     );
 };
+MessageFeed.propTypes = {
+    messages: React.PropTypes.arrayOf(React.PropTypes.shape({
+        emotes: React.PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.number)),
+        reactions: React.PropTypes.objectOf(React.PropTypes.shape({
+            emote: React.PropTypes.string.isRequired,
+            count: React.PropTypes.number.isRequired
+        })),
+        user: React.PropTypes.shape({
+            display_name: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired,
+            logo: React.PropTypes.string
+        }).isRequired,
+        created_at: React.PropTypes.string.isRequired,
+        id: React.PropTypes.node,
+        body: React.PropTypes.node
+    })),
+};
 
 class ProgressBar extends React.Component {
     constructor(props) {
@@ -205,6 +264,14 @@ class ProgressBar extends React.Component {
             parent: "#" + this.props.parentId,
             start: this.props.running
         });
+    }
+
+    static get propTypes() {
+        return {
+            running: React.PropTypes.bool.isRequired,
+            parentId: React.PropTypes.string,
+            template: React.PropTypes.number
+        };
     }
 
     static get defaultProps() {
@@ -237,6 +304,13 @@ const Header = (props) => (
     </Container>
     <ProgressBar running={ props.loading } template={3} />
 </Appbar>);
+Header.propTypes = {
+    onSubmit: React.PropTypes.func,
+    onChange: React.PropTypes.func,
+    loading: React.PropTypes.bool.isRequired,
+    username: React.PropTypes.string,
+    title: React.PropTypes.node.isRequired
+};
 
 class Page extends React.Component {
     constructor(props) {
@@ -254,6 +328,13 @@ class Page extends React.Component {
             this.refresh(this.state.loadingUsername);
         }, this.props.pollInterval);
     }
+
+    static get propTypes() {
+        return {
+            pollInterval: React.PropTypes.number.isRequired
+        };
+    }
+
     componentDidMount() {
         if(this.state.usernameValue != "")
             this.refresh(this.state.usernameValue);
@@ -266,6 +347,8 @@ class Page extends React.Component {
         if(data !== null) {
             if(!history.state || history.state.loadingUsername != this.state.loadingUsername)
                 history.pushState(this.state, this.state.loadingUsername, window.location.toString());
+            else if(history.state.loadingUsername == this.state.loadingUsername)
+                history.replaceState(this.state, this.state.loadingUsername, window.location.toString());
 
             if(document.title.includes(" - "))
                 document.title = document.title.replace(/\-\s.+$/, "- " + this.state.loadingUsername);
