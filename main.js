@@ -59,16 +59,18 @@ const Emote = (props) => {
     const emoteUrl = EMOTE_BASE_URL + props.emoteId + "/";
     const urls = EMOTE_SIZES.map((s, i) => emoteUrl + s + " " + (i+1) + "x");
     return (
-        <img src={ emoteUrl+"1.0" } srcSet={ urls.join(",") } alt={ props.sourceText } title={ props.sourceText } />
+        <img src={ emoteUrl+"1.0" } srcSet={ urls.join(",") } alt={ props.sourceText } title={ props.sourceText } width={ props.width } height={ props.height } />
     );
 };
 Emote.propTypes = {
     emoteId: React.PropTypes.number.isRequired,
-    sourceText: React.PropTypes.string
+    sourceText: React.PropTypes.string,
+    width: React.PropTypes.number,
+    height: React.PropTypes.number
 };
 
 const Reaction = (props) => (
-    <li className="reaction"><Emote emoteId={ props.emoteId } sourceText={ props.emote } />&nbsp;<b className="mui--text-dark-secondary">{ props.count }</b></li>
+    <li className="reaction"><Emote emoteId={ props.emoteId } sourceText={ props.emote } height={16} />&nbsp;<b className="mui--text-dark-secondary">{ props.count }</b></li>
 );
 Reaction.propTypes = {
     emoteId: React.PropTypes.number.isRequired,
