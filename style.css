@@ -56,4 +56,6 @@ q::before, q::after {
     content: "";
 }
 
-a 
+.message-container {
+    margin-left: 85px;
+}

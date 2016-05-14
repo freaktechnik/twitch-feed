@@ -184,8 +184,10 @@ const Message = (props) => (
             <Author slug={ props.authorName } author={ props.author } />
             <a href={ "https://twitch.tv/" + props.authorName + "/p/" + props.id } rel="noopener" target="_blank" className="mui--pull-right mui--text-dark-secondary"><Timestamp date={ props.date } /></a>
         </header>
-        { props.children }
-        <Reactions reactions={ props.reactions } />
+        <div className="message-container">
+            { props.children }
+            <Reactions reactions={ props.reactions } />
+        </div>
     </Panel>
 );
 Message.propTypes = {
