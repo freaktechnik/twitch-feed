@@ -143,15 +143,30 @@ const MessageBody = (props) => {
     });
 
     const linkOpts = { rel: "nofollow" };
-    const finalMsg = msg.reduce((p, c) => {
-        if(typeof c === "string") {
-            p.push(...ReactAutolink.autolink(c, linkOpts));
+    msg = [].concat(...msg.map((m) => {
+        if(typeof m == "string")
+            return m.split("\n");
+        else
+            return m;
+    }));
+
+    const paragraphs = [];
+    let currentParagraph = 0;
+    for(let i = 0; i < msg.length; ++i) {
+        let c = msg[i];
+        if(!paragraphs[currentParagraph])
+            paragraphs[currentParagraph] = [];
+
+        if(typeof c == "string") {
+            paragraphs[currentParagraph].push(ReactAutolink.autolink(c));
+            if(i + 1 < msg.length && typeof msg[i+1] == "string")
+                ++currentParagraph;
         }
         else {
-            p.push(c);
+            paragraphs[currentParagraph].push(c);
         }
-        return p;
-    }, []);
+    }
+    const finalMsg = paragraphs.map((p, i) => (<p key={ i }>{ [].concat(...p) }</p>));
 
     return (
         <span>{ finalMsg }</span>
@@ -167,7 +182,7 @@ const Message = (props) => (
         <header>
             <Avatar height={70} width={70} className="mui--pull-left message-img" src={ props.avatar || "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_300x300.png" } />
             <Author slug={ props.authorName } author={ props.author } />
-            <Timestamp date={ props.date } className="mui--pull-right mui--text-dark-secondary" />
+            <a href={ "https://twitch.tv/" + props.authorName + "/p/" + props.id } rel="noopener" target="_blank" className="mui--pull-right mui--text-dark-secondary"><Timestamp date={ props.date } /></a>
         </header>
         <q>{ props.children }</q>
         <Reactions reactions={ props.reactions } />
@@ -178,7 +193,8 @@ Message.propTypes = {
     authorName: React.PropTypes.string.isRequired,
     author: React.PropTypes.string.isRequired,
     date: React.PropTypes.number.isRequired,
-    reactions: React.PropTypes.arrayOf(REACTION_SHAPE).isRequired
+    reactions: React.PropTypes.arrayOf(REACTION_SHAPE).isRequired,
+    id: React.PropTypes.node.isRequired
 };
 
 const MAX_REACTIONS = 9;
@@ -214,7 +230,7 @@ const MessageFeed = (props) => {
                 });
             }
             return (
-                <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
+                <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } id={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
                     <MessageBody body={ message.body } emotes={ message.emotes } />
                 </Message>
             )
