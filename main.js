@@ -169,7 +169,7 @@ const MessageBody = (props) => {
     const finalMsg = paragraphs.map((p, i) => (<p key={ i }>{ [].concat(...p) }</p>));
 
     return (
-        <span>{ finalMsg }</span>
+        <q>{ finalMsg }</q>
     );
 };
 MessageBody.propTypes = {
@@ -184,7 +184,7 @@ const Message = (props) => (
             <Author slug={ props.authorName } author={ props.author } />
             <a href={ "https://twitch.tv/" + props.authorName + "/p/" + props.id } rel="noopener" target="_blank" className="mui--pull-right mui--text-dark-secondary"><Timestamp date={ props.date } /></a>
         </header>
-        <q>{ props.children }</q>
+        { props.children }
         <Reactions reactions={ props.reactions } />
     </Panel>
 );
