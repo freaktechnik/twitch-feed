@@ -10,7 +10,8 @@ const Appbar = mui.react.Appbar,
       Form = mui.react.Form,
       Container = mui.react.Container,
       Input = mui.react.Input,
-      Panel = mui.react.Panel;
+      Panel = mui.react.Panel,
+      Divider = mui.react.Divider;
 
 const REACTION_SHAPE = React.PropTypes.shape({
     key: React.PropTypes.number.isRequired,
@@ -185,6 +186,7 @@ const Message = (props) => (
             <a href={ "https://twitch.tv/" + props.authorName + "/p/" + props.id } rel="noopener" target="_blank" className="mui--pull-right mui--text-dark-secondary"><Timestamp date={ props.date } /></a>
         </header>
         <div className="message-container">
+            <Divider/>
             { props.children }
             <Reactions reactions={ props.reactions } />
         </div>
