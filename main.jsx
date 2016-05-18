@@ -303,6 +303,11 @@ class ProgressBar extends React.Component {
             running: false
         };
     }
+
+    componentWillUnmount() {
+        this.progress.end();
+    }
+
     render() {
         if(this.props.running)
             this.progress.start();
@@ -339,16 +344,14 @@ class Page extends React.Component {
         super(props);
         this.handleKeypress = this.handleKeypress.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
+        this.handleKeyboard = this.handleKeyboard.bind(this);
+        this.handlePopstate = this.handlePopstate.bind(this);
         this.state = history.state || { data: [], usernameValue: "", loading: false, loadingUsername: "" };
         this.state.loadingUsername = this.state.usernameValue;
 
         document.title = props.title;
         if(this.state.loadingUsername != "")
             document.title = document.title + " - " + this.state.loadingUsername;
-
-        window.addEventListener("popstate", (e) => {
-            this.setState(e.state);
-        });
 
         setInterval(() => {
             this.refresh(this.state.loadingUsername);
@@ -365,6 +368,24 @@ class Page extends React.Component {
     componentDidMount() {
         if(this.state.usernameValue != "")
             this.refresh(this.state.usernameValue);
+
+        document.addEventListener("keypress", this.handleKeyboard, true);
+        window.addEventListener("popstate", this.handlePopstate, false);
+    }
+    componentWillUnmount() {
+        document.removeEventListener("keypress", this.handleKeyboard, true);
+        window.removeEventListener("popstate", this.handlePopstate, false);
+    }
+
+    handlePopstate(e) {
+        this.setState(e.state);
+    }
+
+    handleKeyboard(e) {
+        if(e.key == "r" && e.ctrlKey) {
+            e.preventDefault();
+            this.refresh(this.state.usernameValue);
+        }
     }
     handleKeypress(e) {
         this.setState({ usernameValue: e.target.value });
