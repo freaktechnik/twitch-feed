@@ -69,7 +69,7 @@ q::before, q::after {
     visibility: hidden;
     background: white;
     position: absolute;
-    max-height: 50vh;
+    max-height: 14em;
     padding: 15px;
     overflow-y: scroll;
     cursor: default;
