@@ -344,7 +344,7 @@ class ProgressBar extends React.Component {
 }
 
 const Header = (props) => (
-<Appbar className="mui--z1 sticky-appbar">
+<Appbar className="mui--z2 sticky-appbar">
     <Container fluid={true} className="mui--appbar-height mui--appbar-line-height mui--align-middle">
         <h className="mui--text-title mui--hidden-xs">{ props.title }</h>
         <Form inline={true} onSubmit={ props.onSubmit } className="mui--pull-right mui--appbar-height navbar-form">
