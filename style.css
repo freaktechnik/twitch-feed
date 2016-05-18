@@ -1,4 +1,6 @@
-
+blockquote {
+    margin: 0;
+}
 
 .navbar-form input {
     color: white;
@@ -50,10 +52,6 @@
 
 .reaction b {
     font-weight: inherit;
-}
-
-q::before, q::after {
-    content: initial;
 }
 
 .message-container {

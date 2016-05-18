@@ -111,12 +111,12 @@ const Reactions = (props) => {
     const visibleReactions = reactions.slice(0, MAX_REACTIONS).map(getReaction);
     const extraReactions = reactions.slice(MAX_REACTIONS).map(getReaction);
     return (
-        <div>
+        <aside>
             <ul className="mui-list--inline reactions">
                 { visibleReactions }
             </ul>
             <ReactionsOverflow reactions={ extraReactions }/>
-        </div>
+        </aside>
     );
 };
 Reactions.propTypes = {
@@ -202,12 +202,13 @@ const MessageBody = (props) => {
     const finalMsg = paragraphs.map((p, i) => (<p key={ i }>{ [].concat(...p) }</p>));
 
     return (
-        <q>{ finalMsg }</q>
+        <blockquote cite={ props.cite }>{ finalMsg }</blockquote>
     );
 };
 MessageBody.propTypes = {
     body: React.PropTypes.string.isRequired,
-    emotes: React.PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.number)).isRequired
+    emotes: React.PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.number)).isRequired,
+    cite: React.PropTypes.string
 };
 
 const Message = (props) => (
@@ -257,7 +258,7 @@ const MessageFeed = (props) => {
             }
             return (
                 <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } id={ message.id } reactions={ reactions }>
-                    <MessageBody body={ message.body } emotes={ message.emotes } />
+                    <MessageBody body={ message.body } emotes={ message.emotes } cite={ "https://twitch.tv/" + message.user.name + "/p/" + message.id }/>
                 </Message>
             )
         });
