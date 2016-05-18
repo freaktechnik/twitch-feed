@@ -93,6 +93,9 @@ const ReactionsOverflow = (props) => {
         { content }
     </div>);
 };
+React.propTypes = {
+    reactions: React.PropTypes.arrayOf(React.PropTypes.node).isRequired
+};
 
 const Reactions = (props) => {
     const reactions = props.reactions.sort((a, b) => {
