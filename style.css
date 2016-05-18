@@ -44,18 +44,44 @@
     background: white;
 }
 
-.reactions .reaction img {
+.reaction img {
     max-height: 16px;
 }
 
-.reactions .reaction b {
+.reaction b {
     font-weight: inherit;
 }
 
 q::before, q::after {
-    content: "";
+    content: initial;
 }
 
 .message-container {
     margin-left: 85px;
+}
+
+.reactions {
+    display: inline-block;
+}
+
+.reactions-popup {
+    display: none;
+    visibility: hidden;
+    background: white;
+    position: absolute;
+    max-height: 50vh;
+    padding: 15px;
+    overflow-y: scroll;
+    cursor: default;
+}
+
+.reactions-more {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0 .5em;
+}
+
+.reactions-more:hover .reactions-popup, .reactions-more:focus .reactions-popup, .reactions-more .reactions-popup:focus {
+    display: block;
+    visibility: visible;
 }

@@ -79,12 +79,41 @@ Reaction.propTypes = {
     count: React.PropTypes.number.isRequired
 };
 
+const ReactionsOverflow = (props) => {
+    const content = props.reactions.length ? [
+        "⋮",
+        (<div className="reactions-popup mui--z2" tabIndex="0">
+            <ul className="mui-list--unstyled">
+                { props.reactions }
+            </ul>
+        </div>)
+    ] : [];
+    const tabindex = Math.sign(props.reactions.length) - 1;
+    return (<div className="reactions-more" tabIndex={ tabindex }>
+        { content }
+    </div>);
+};
+
 const Reactions = (props) => {
-    const reactions = props.reactions.map((r) => (<Reaction emoteId={ r.key } emote={ r.emote } count={ r.count } key={ r.key } />));
+    const reactions = props.reactions.sort((a, b) => {
+        if(a.emote == "endorse")
+            return Number.MIN_SAFE_INTEGER;
+        else if(b.emote == "endorse")
+            return Number.MAX_SAFE_INTEGER;
+        else
+            return b.count - a.count;
+    });
+    const getReaction = (r) => (<Reaction emoteId={ r.key } emote={ r.emote } count={ r.count } key={ r.key } />);
+
+    const visibleReactions = reactions.slice(0, MAX_REACTIONS).map(getReaction);
+    const extraReactions = reactions.slice(MAX_REACTIONS).map(getReaction);
     return (
-        <ul className="mui-list--inline reactions">
-            { reactions }
-        </ul>
+        <div>
+            <ul className="mui-list--inline reactions">
+                { visibleReactions }
+            </ul>
+            <ReactionsOverflow reactions={ extraReactions }/>
+        </div>
     );
 };
 Reactions.propTypes = {
@@ -223,18 +252,8 @@ const MessageFeed = (props) => {
                     }
                 ];
             }
-            else {
-                reactions = reactions.sort((a, b) => {
-                    if(a.emote == "endorse")
-                        return Number.MIN_SAFE_INTEGER;
-                    else if(b.emote == "endorse")
-                        return Number.MAX_SAFE_INTEGER;
-                    else
-                        return b.count - a.count;
-                });
-            }
             return (
-                <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } id={ message.id } reactions={ reactions.slice(0, MAX_REACTIONS) }>
+                <Message author={ message.user.display_name } avatar={ message.user.logo } authorName={ message.user.name } date={ message.date } key={ message.id } id={ message.id } reactions={ reactions }>
                     <MessageBody body={ message.body } emotes={ message.emotes } />
                 </Message>
             )
