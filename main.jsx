@@ -57,6 +57,12 @@ const getFeed = (username) => {
 const EMOTE_SIZES = [ "1.0", "2.0", "3.0" ];
 const EMOTE_BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/";
 
+/**
+ * This converts @name into a link to name's channel. However usually those are
+ * mentions of the Twitter usernames, which sometimes don't match up. In a perfect
+ * world, Twitch would add some magic to fix that, but there are no mentions yet
+ * in the Twitch world.
+ */
 const autoMention = (nodes) => {
     var ret = [];
 
@@ -65,17 +71,22 @@ const autoMention = (nodes) => {
             var node = nodes[n];
             var result = node.search(/@\S+/);
             var offset = 0;
-            while(result != -1) {
-
+            while(result != -1 && node.length) {
                 if(result > 0) {
                     ret.push(node.slice(0, result));
                 }
-                var mention = node.match(/@\S+/);
+                var mention = node.match(/@\S+/)[0];
                 ret.push(<Mention text={ mention } key={ n+":"+(offset+result)+mention }/>);
 
-                node = node.slice(result + mention.length);
-                offset += result + mention.length;
-                result = node.search(/@\S+/);
+                if(result + mention.length < node.length) {
+                    node = node.slice(result + mention.length);
+                    offset += result + mention.length;
+                    result = node.search(/@\S+/);
+                }
+                else {
+                    node = "";
+                    result = -1;
+                }
             }
             if(node.length) {
                 ret.push(node);
@@ -126,7 +137,7 @@ const ReactionsOverflow = (props) => {
         { content }
     </div>);
 };
-React.propTypes = {
+ReactionsOverflow.propTypes = {
     reactions: React.PropTypes.arrayOf(React.PropTypes.node).isRequired
 };
 
@@ -165,18 +176,18 @@ Timestamp.propTypes = {
 };
 
 const Channel = (props) => {
-    if(!props.author)
-        props.author = props.slug;
+    var author = props.author || props.slug;
+    var tooltipAuthor = author.startsWith("@") ? author.substr(1) : author;
 
-    return ( <a href={ "https://twitch.tv/" + props.slug } title={ props.author + " on Twitch" }>{ props.author }</a> );
+    return ( <a href={ "https://twitch.tv/" + props.slug } title={ tooltipAuthor + " on Twitch" }>{ author }</a> );
 };
 Channel.propTypes = {
-    slug: React.propTypes.string.isRequired,
-    author: React.propTypes.string
+    slug: React.PropTypes.string.isRequired,
+    author: React.PropTypes.string
 };
 
 const Author = (props) => (
-    <cite><Channel props={ props }/></cite>
+    <cite><Channel slug={ props.slug } author={ props.author }/></cite>
 );
 Author.propTypes = {
     slug: React.PropTypes.string.isRequired,
@@ -184,7 +195,6 @@ Author.propTypes = {
 };
 
 const Mention = (props) => {
-
     var slug = props.text.toLowerCase();
     if(slug.startsWith("@")) {
         slug = slug.substr(1);
@@ -193,7 +203,7 @@ const Mention = (props) => {
     return ( <Channel slug={ slug } author={ props.text }/> );
 };
 Mention.propTypes = {
-    text: Rect.propTypes.string.isRequired
+    text: React.PropTypes.string.isRequired
 };
 
 const AVATAR_SIZES = [ 50, 70, 150, 300, 600 ];
