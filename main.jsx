@@ -56,6 +56,39 @@ const getFeed = (username) => {
 
 const EMOTE_SIZES = [ "1.0", "2.0", "3.0" ];
 const EMOTE_BASE_URL = "https://static-cdn.jtvnw.net/emoticons/v1/";
+
+const autoMention = (nodes) => {
+    var ret = [];
+
+    for(var n in nodes) {
+        if(typeof nodes[n] == "string" && nodes[n].search(/@\S+/) != -1) {
+            var node = nodes[n];
+            var result = node.search(/@\S+/);
+            var offset = 0;
+            while(result != -1) {
+
+                if(result > 0) {
+                    ret.push(node.slice(0, result));
+                }
+                var mention = node.match(/@\S+/);
+                ret.push(<Mention text={ mention } key={ n+":"+(offset+result)+mention }/>);
+
+                node = node.slice(result + mention.length);
+                offset += result + mention.length;
+                result = node.search(/@\S+/);
+            }
+            if(node.length) {
+                ret.push(node);
+            }
+        }
+        else {
+            ret.push(nodes[n]);
+        }
+    }
+
+    return ret;
+};
+
 const Emote = (props) => {
     const emoteUrl = EMOTE_BASE_URL + props.emoteId + "/";
     const urls = EMOTE_SIZES.map((s, i) => emoteUrl + s + " " + (i+1) + "x");
@@ -131,12 +164,36 @@ Timestamp.propTypes = {
     className: React.PropTypes.string
 };
 
+const Channel = (props) => {
+    if(!props.author)
+        props.author = props.slug;
+
+    return ( <a href={ "https://twitch.tv/" + props.slug } title={ props.author + " on Twitch" }>{ props.author }</a> );
+};
+Channel.propTypes = {
+    slug: React.propTypes.string.isRequired,
+    author: React.propTypes.string
+};
+
 const Author = (props) => (
-    <cite><a href={ "https://twitch.tv/" + props.slug }>{ props.author }</a></cite>
+    <cite><Channel props={ props }/></cite>
 );
 Author.propTypes = {
     slug: React.PropTypes.string.isRequired,
     author: React.PropTypes.string.isRequired
+};
+
+const Mention = (props) => {
+
+    var slug = props.text.toLowerCase();
+    if(slug.startsWith("@")) {
+        slug = slug.substr(1);
+    }
+
+    return ( <Channel slug={ slug } author={ props.text }/> );
+};
+Mention.propTypes = {
+    text: Rect.propTypes.string.isRequired
 };
 
 const AVATAR_SIZES = [ 50, 70, 150, 300, 600 ];
@@ -191,7 +248,8 @@ const MessageBody = (props) => {
             paragraphs[currentParagraph] = [];
 
         if(typeof c == "string") {
-            paragraphs[currentParagraph].push(ReactAutolink.autolink(c));
+            var processed = autoMention(ReactAutolink.autolink(c));
+            paragraphs[currentParagraph].push(...processed);
             if(i + 1 < msg.length && typeof msg[i+1] == "string")
                 ++currentParagraph;
         }
