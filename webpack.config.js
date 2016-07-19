@@ -1,6 +1,7 @@
 var webpack = require("webpack");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var CleanPlugin = require("clean-webpack-plugin");
 
 var config = {
     entry: './src/main.jsx',
@@ -22,6 +23,7 @@ var config = {
 		]
     },
     plugins: [
+    	new CleanPlugin([ 'build' ]),
 		new webpack.DefinePlugin({
 			"process.env": {
 				NODE_ENV: '"production"'
