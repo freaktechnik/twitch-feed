@@ -1,3 +1,4 @@
+import React from 'react';
 import Mention from './mention.jsx';
 
 /**

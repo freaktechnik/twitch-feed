@@ -48,7 +48,10 @@ var config = {
     		template: './src/index.tmpl.html'
 		}),
 		new webpack.optimize.UglifyJsPlugin(),
-		new ExtractTextPlugin("[name]-[hash].css")
+		new ExtractTextPlugin("[name]-[hash].css"),
+		new webpack.ProvidePlugin({
+			fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+		})
     ]
 };
 

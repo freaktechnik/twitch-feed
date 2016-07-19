@@ -1,5 +1,3 @@
-import fetch from "whatwg-fetch";
-
 import { clientID, followsLimit } from "./config.json";
 
 const opts = {
