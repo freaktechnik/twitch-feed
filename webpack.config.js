@@ -4,7 +4,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var CleanPlugin = require("clean-webpack-plugin");
 
 var config = {
-    entry: './src/main.jsx',
+    entry: './src/index.jsx',
     output: {
         path: './build',
         filename: '[name]-[hash].js'
@@ -14,12 +14,27 @@ var config = {
 			{
 				test: /\.jsx$/,
 				exclude: /node_modules/,
-				loader: 'babel'
+				loader: 'babel',
+				query: {
+					presets: [ 'es2015', 'react' ]
+				}
 			},
 			{
 			    test: /\.css$/,
 			    loader: ExtractTextPlugin.extract('style', 'css')
-		    }
+		    },
+		    {
+		    	test: /\.json$/,
+		    	loader: 'json'
+	    	},
+	    	{
+	    		test: /\.js$/,
+	    		exclude: /node_modules/,
+	    		loader: 'babel',
+	    		query: {
+	    			presets: [ 'es2015' ]
+    			}
+	    	}
 		]
     },
     plugins: [
