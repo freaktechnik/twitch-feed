@@ -1,17 +1,26 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import Appbar from "muicss/lib/react/appbar";
+import Button from "muicss/lib/react/button";
+import Form from "muicss/lib/react/form";
+import Container from "muicss/lib/react/container";
+import Input from "muicss/lib/react/input";
+import Panel from "muicss/lib/react/panel";
+import Divider from "muicss/lib/react/divider";
+import Mprogress from "mprogress/build/js/mprogress";
+import moment from "moment";
+import ReactAutolink from "react-autolink";
+
+import 'muicss/lib/css/mui.min.css';
+import 'mprogress/build/css/mprogress.min.css';
+import './style.css';
+
 const clientID = "ioqz7wp3cbuen5pi9rol3nrzfjr2u0f";
 const opts = {
     headers: {
         "Client-ID": clientID
     }
 };
-
-const Appbar = mui.react.Appbar,
-      Button = mui.react.Button,
-      Form = mui.react.Form,
-      Container = mui.react.Container,
-      Input = mui.react.Input,
-      Panel = mui.react.Panel,
-      Divider = mui.react.Divider;
 
 const REACTION_SHAPE = React.PropTypes.shape({
     key: React.PropTypes.number.isRequired,
@@ -168,7 +177,7 @@ Reactions.propTypes = {
 };
 
 const Timestamp = (props) => (
-    <time datetime={ props.date } title ={ new Date(props.date).toLocaleString() } className={ props.className }>{ moment(props.date).fromNow() }</time>
+    <time dateTime={ props.date } title ={ new Date(props.date).toLocaleString() } className={ props.className }>{ moment(props.date).fromNow() }</time>
 );
 Timestamp.propTypes = {
     date: React.PropTypes.number.isRequired,
