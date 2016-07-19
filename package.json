@@ -34,7 +34,8 @@
     "muicss": "^0.6.7",
     "react": "^15.2.1",
     "react-autolink": "^0.2.1",
-    "react-dom": "^15.2.1"
+    "react-dom": "^15.2.1",
+    "whatwg-fetch": "^1.0.0"
   },
   "babel": {
     "presets": [

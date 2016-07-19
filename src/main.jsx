@@ -10,6 +10,7 @@ import Divider from "muicss/lib/react/divider";
 import Mprogress from "mprogress/build/js/mprogress";
 import moment from "moment";
 import ReactAutolink from "react-autolink";
+import fetch from "whatwg-fetch";
 
 import 'muicss/lib/css/mui.min.css';
 import 'mprogress/build/css/mprogress.min.css';
