@@ -4,8 +4,9 @@
   "description": "A twitter-like feed of all the channels you follow.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --progress"
+    "test": "npm run eslint",
+    "build": "webpack --progress",
+    "lint": "eslint src/"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,9 @@
     "babel-preset-react": "^6.11.1",
     "clean-webpack-plugin": "^0.1.10",
     "css-loader": "^0.23.1",
+    "eslint": "^3.13.0",
+    "eslint-plugin-freaktechnik": "^2.0.0",
+    "eslint-plugin-jsx": "0.0.2",
     "exports-loader": "^0.6.3",
     "extract-text-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.22.0",

@@ -1,25 +1,30 @@
 import { clientID, followsLimit } from "./config.json";
 
-const opts = {
-    headers: {
-        "Client-ID": clientID
-    }
+const opts = Object.freeze({
+    headers: Object.freeze({
+        "Client-ID": clientID,
+        'Accept': 'application/vnd.twitchtv.v5+json'
+    })
+});
+
+const getUserID = (username) => {
+    return fetch(`https://api.twitch.tv/kraken/users?login=${username}`, opts);
 };
 
-const getFollows = (username, page = 1) => {
-    return fetch(`https://api.twitch.tv/kraken/users/${username.toLowerCase()}/follows/channels?limit=${followsLimit}&offset=${(page-1)*followsLimit}`, opts)
+const getFollows = (userId, page = 1) => {
+    return fetch(`https://api.twitch.tv/kraken/users/${userId}/follows/channels?limit=${followsLimit}&offset=${(page - 1) * followsLimit}`, opts)
         .then((response) => response.json())
         .then((json) => {
             if(json._total > page * followsLimit) {
-                return getFollows(username, page + 1).then((follows) => {
+                return getFollows(userId, page + 1).then((follows) => {
                     return json.follows.concat(follows);
                 });
             }
             return json.follows;
         });
 };
-const getPosts = (username) => {
-    return fetch("https://api.twitch.tv/kraken/feed/" + username + "/posts", opts)
+const getPosts = (userId) => {
+    return fetch("https://api.twitch.tv/kraken/feed/" + userId + "/posts", opts)
         .then((response) => response.json(), () => ({ posts: [] }))
         .then((json) => {
             if("error" in json) {
@@ -34,8 +39,9 @@ const getPosts = (username) => {
         });
 };
 export const getFeed = (username) => {
-    return getFollows(username)
-        .then((follows) => Promise.all(follows.map((follow) => getPosts(follow.channel.name))))
+    return getUserID(username)
+        .then(getFollows)
+        .then((follows) => Promise.all(follows.map((follow) => getPosts(follow.channel._id))))
         .then((posts) => [].concat(...posts))
         .then((posts) => posts.sort((a, b) => b.date - a.date));
 };
