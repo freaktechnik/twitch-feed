@@ -16,7 +16,7 @@ var config = {
 				exclude: /node_modules/,
 				loader: 'babel',
 				query: {
-					presets: [ 'es2015', 'react' ]
+					presets: [ 'es2017', 'es2016', 'es2015', 'react' ]
 				}
 			},
 			{
@@ -32,7 +32,7 @@ var config = {
 	    		exclude: /node_modules/,
 	    		loader: 'babel',
 	    		query: {
-	    			presets: [ 'es2015' ]
+	    			presets: [ 'es2017', 'es2016', 'es2015' ]
     			}
 	    	}
 		]
@@ -56,4 +56,3 @@ var config = {
 };
 
 module.exports = config;
-

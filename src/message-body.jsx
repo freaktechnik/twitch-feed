@@ -41,7 +41,7 @@ const MessageBody = (props) => {
             paragraphs[currentParagraph] = [];
 
         if(typeof c == "string") {
-            var processed = autoMention(ReactAutolink.autolink(c));
+            var processed = autoMention(ReactAutolink.autolink(c, linkOpts));
             paragraphs[currentParagraph].push(...processed);
             if(i + 1 < msg.length && typeof msg[i+1] == "string")
                 ++currentParagraph;
