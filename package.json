@@ -26,14 +26,14 @@
     "babel-preset-es2017": "^6.16.0",
     "babel-preset-react": "^6.11.1",
     "clean-webpack-plugin": "^0.1.10",
-    "css-loader": "^0.23.1",
+    "css-loader": "^0.26.1",
     "eslint": "^3.13.0",
     "eslint-plugin-freaktechnik": "^2.0.0",
     "eslint-plugin-jsx": "0.0.2",
     "exports-loader": "^0.6.3",
     "extract-text-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.22.0",
-    "imports-loader": "^0.6.5",
+    "imports-loader": "^0.7.0",
     "json-loader": "^0.5.4",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1"
@@ -41,10 +41,10 @@
   "dependencies": {
     "moment": "^2.14.1",
     "mprogress": "^0.1.1",
-    "muicss": "^0.6.7",
+    "muicss": "^0.9.8",
     "react": "^15.2.1",
     "react-autolink": "^0.2.1",
     "react-dom": "^15.2.1",
-    "whatwg-fetch": "^1.0.0"
+    "whatwg-fetch": "^2.0.2"
   }
 }
