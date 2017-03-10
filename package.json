@@ -26,7 +26,7 @@
     "babel-preset-es2017": "^6.16.0",
     "babel-preset-react": "^6.11.1",
     "clean-webpack-plugin": "^0.1.10",
-    "css-loader": "^0.26.1",
+    "css-loader": "^0.27.0",
     "eslint": "^3.13.0",
     "eslint-plugin-freaktechnik": "^2.0.0",
     "eslint-plugin-jsx": "0.0.2",
