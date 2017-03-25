@@ -2,11 +2,12 @@ var webpack = require("webpack");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var CleanPlugin = require("clean-webpack-plugin");
+const path = require("path");
 
 var config = {
     entry: './src/index.jsx',
     output: {
-        path: './build',
+        path: path.resolve(__dirname, './build'),
         filename: '[name]-[hash].js'
     },
     module: {
