@@ -44,7 +44,7 @@
     "muicss": "^0.9.8",
     "react": "^15.2.1",
     "react-autolink": "^0.2.1",
-    "react-dom": "^15.2.1",
+    "react-dom": "^16.0.0",
     "whatwg-fetch": "^2.0.2"
   }
 }
