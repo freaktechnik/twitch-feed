@@ -2,49 +2,57 @@ import React from 'react';
 import Emote from './emote.jsx';
 import ReactAutolink from 'react-autolink';
 import autoMention from './auto-mention.jsx';
+import PropTypes from 'prop-types';
+
+const START = 0;
+const EXTRA = 1;
+const TO_PREVIOUS = 3;
 
 const MessageBody = (props) => {
-    let msg = [props.body];
+    let msg = [ props.body ];
     let offset = 0;
-    props.emotes.sort((a, b) => {
-        return a.start - b.start;
-    }).forEach((emote) => {
-        const initialMsg = msg[msg.length-1];
-        if(emote.start > 0)
-            msg[msg.length-1] = initialMsg.substring(0, emote.start + offset);
-        else
+    props.emotes.sort((a, b) => a.start - b.start).forEach((emote) => {
+        const initialMsg = msg[--msg.length];
+        if(emote.start) {
+            msg[--msg.length] = initialMsg.substring(START, emote.start + offset);
+        }
+        else {
             msg = [];
+        }
 
-        const emoteName = initialMsg.substring(emote.start + offset, emote.end + offset + 1);
+        const emoteName = initialMsg.substring(emote.start + offset, emote.end + offset + EXTRA);
         msg.push(<Emote emoteId={ emote.id } sourceText={ emoteName } />);
 
-        msg.push(initialMsg.substring(emote.end + offset + 1));
+        msg.push(initialMsg.substring(emote.end + offset + EXTRA));
 
-        if(emote.start > 0)
-            offset -= msg[msg.length - 3].length;
+        if(emote.start) {
+            offset -= msg[msg.length - TO_PREVIOUS].length;
+        }
         offset -= emoteName.length;
     });
 
     const linkOpts = { rel: "nofollow" };
     msg = [].concat(...msg.map((m) => {
-        if(typeof m == "string")
+        if(typeof m == "string") {
             return m.split("\n");
-        else
-            return m;
+        }
+        return m;
     }));
 
     const paragraphs = [];
     let currentParagraph = 0;
     for(let i = 0; i < msg.length; ++i) {
-        let c = msg[i];
-        if(!paragraphs[currentParagraph])
+        const c = msg[i];
+        if(!paragraphs[currentParagraph]) {
             paragraphs[currentParagraph] = [];
+        }
 
         if(typeof c == "string") {
-            var processed = autoMention(ReactAutolink.autolink(c, linkOpts));
+            const processed = autoMention(ReactAutolink.autolink(c, linkOpts));
             paragraphs[currentParagraph].push(...processed);
-            if(i + 1 < msg.length && typeof msg[i+1] == "string")
+            if(i + EXTRA < msg.length && typeof msg[i + EXTRA] == "string") {
                 ++currentParagraph;
+            }
         }
         else {
             paragraphs[currentParagraph].push(c);
@@ -57,8 +65,8 @@ const MessageBody = (props) => {
     );
 };
 MessageBody.propTypes = {
-    body: React.PropTypes.string.isRequired,
-    emotes: React.PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.number)).isRequired,
-    cite: React.PropTypes.string
+    body: PropTypes.string.isRequired,
+    emotes: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.number)).isRequired,
+    cite: PropTypes.string
 };
 export default MessageBody;

@@ -5,23 +5,24 @@ import Form from "muicss/lib/react/form";
 import Container from "muicss/lib/react/container";
 import Input from "muicss/lib/react/input";
 import ProgressBar from './progress-bar.jsx';
+import PropTypes from 'prop-types';
 
 const Header = (props) => (
-<Appbar className="mui--z2 sticky-appbar">
-    <Container fluid={true} className="mui--appbar-height mui--appbar-line-height mui--align-middle">
-        <h className="mui--text-title mui--hidden-xs">{ props.title }</h>
-        <Form inline={true} onSubmit={ props.onSubmit } className="mui--pull-right mui--appbar-height navbar-form">
-            <Input value={ props.username } hint="Twitch Username" onChange={ props.onChange } />
-            <Button type="submit">Load</Button>
-        </Form>
-    </Container>
-    <ProgressBar running={ props.loading } template={3} />
-</Appbar>);
+    <Appbar className="mui--z2 sticky-appbar">
+        <Container fluid={true} className="mui--appbar-height mui--appbar-line-height mui--align-middle">
+            <h className="mui--text-title mui--hidden-xs">{ props.title }</h>
+            <Form inline={true} onSubmit={ props.onSubmit } className="mui--pull-right mui--appbar-height navbar-form">
+                <Input value={ props.username } hint="Twitch Username" onChange={ props.onChange } />
+                <Button type="submit">Load</Button>
+            </Form>
+        </Container>
+        <ProgressBar running={ props.loading } template={3} />
+    </Appbar>);
 Header.propTypes = {
-    onSubmit: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    loading: React.PropTypes.bool,
-    username: React.PropTypes.string,
-    title: React.PropTypes.node.isRequired
+    onSubmit: PropTypes.func,
+    onChange: PropTypes.func,
+    loading: PropTypes.bool,
+    username: PropTypes.string,
+    title: PropTypes.node.isRequired
 };
 export default Header;

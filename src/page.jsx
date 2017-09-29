@@ -2,6 +2,7 @@ import React from 'react';
 import Container from 'muicss/lib/react/container';
 import Header from './header.jsx';
 import MessageFeed from './message-feed.jsx';
+import PropTypes from 'prop-types';
 
 import { getFeed } from './twitch-api';
 
@@ -12,12 +13,18 @@ export default class Page extends React.Component {
         this.handleRefresh = this.handleRefresh.bind(this);
         this.handleKeyboard = this.handleKeyboard.bind(this);
         this.handlePopstate = this.handlePopstate.bind(this);
-        this.state = history.state || { data: [], usernameValue: "", loading: false, loadingUsername: "" };
+        this.state = history.state || {
+            data: [],
+            usernameValue: "",
+            loading: false,
+            loadingUsername: ""
+        };
         this.state.loadingUsername = this.state.usernameValue;
 
         document.title = props.title;
-        if(this.state.loadingUsername != "")
-            document.title = document.title + " - " + this.state.loadingUsername;
+        if(this.state.loadingUsername != "") {
+            document.title = `${document.title} - ${this.state.loadingUsername}`;
+        }
 
         setInterval(() => {
             this.refresh(this.state.loadingUsername);
@@ -26,14 +33,15 @@ export default class Page extends React.Component {
 
     static get propTypes() {
         return {
-            pollInterval: React.PropTypes.number.isRequired,
-            title: React.PropTypes.string.isRequired
+            pollInterval: PropTypes.number.isRequired,
+            title: PropTypes.string.isRequired
         };
     }
 
     componentDidMount() {
-        if(this.state.usernameValue != "")
+        if(this.state.usernameValue != "") {
             this.refresh(this.state.usernameValue);
+        }
 
         document.addEventListener("keypress", this.handleKeyboard, true);
         window.addEventListener("popstate", this.handlePopstate, false);
@@ -57,31 +65,45 @@ export default class Page extends React.Component {
         this.setState({ usernameValue: e.target.value });
     }
     setData(data) {
-        this.setState({ data, loading: false });
+        this.setState({
+            data,
+            loading: false
+        });
         if(data !== null) {
-            if(!history.state || history.state.loadingUsername != this.state.loadingUsername)
+            if(!history.state || history.state.loadingUsername != this.state.loadingUsername) {
                 history.pushState(this.state, this.state.loadingUsername, window.location.toString());
-            else if(history.state.loadingUsername == this.state.loadingUsername)
+            }
+            else if(history.state.loadingUsername == this.state.loadingUsername) {
                 history.replaceState(this.state, this.state.loadingUsername, window.location.toString());
+            }
 
-            if(document.title.includes(" - "))
-                document.title = document.title.replace(/\-\s.+$/, "- " + this.state.loadingUsername);
-            else
-                document.title = document.title + " - " + this.state.loadingUsername;
+            if(document.title.includes(" - ")) {
+                document.title = document.title.replace(/-\s.+$/, `- ${this.state.loadingUsername}`);
+            }
+            else {
+                document.title = `${document.title} - ${this.state.loadingUsername}`;
+            }
         }
     }
     refresh(username) {
         if(username != "") {
-            this.setState({ loading: true, loadingUsername: username });
-            getFeed(username).then((messages) => {
-                if(this.state.loadingUsername != username)
-                    return;
-                this.setData(messages);
-            }, () => {
-                if(this.state.loadingUsername != username)
-                    return;
-                this.setData(null);
+            this.setState({
+                loading: true,
+                loadingUsername: username
             });
+            getFeed(username)
+                .then((messages) => {
+                    if(this.state.loadingUsername != username) {
+                        return;
+                    }
+                    this.setData(messages);
+                })
+                .catch(() => {
+                    if(this.state.loadingUsername != username) {
+                        return;
+                    }
+                    this.setData(null);
+                });
         }
         else {
             this.setData([]);

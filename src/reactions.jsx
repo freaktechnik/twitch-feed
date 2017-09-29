@@ -1,22 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { Reaction, ReactionShape } from './reaction.jsx';
 import ReactionsOverflow from './reactions-overflow.jsx';
 
 import { maxReactions } from './config.json';
 
+const START = 0;
+
 const Reactions = (props) => {
     const reactions = props.reactions.sort((a, b) => {
-        if(a.emote == "endorse")
+        if(a.emote == "endorse") {
             return Number.MIN_SAFE_INTEGER;
-        else if(b.emote == "endorse")
+        }
+        else if(b.emote == "endorse") {
             return Number.MAX_SAFE_INTEGER;
-        else
-            return b.count - a.count;
+        }
+        return b.count - a.count;
     });
     const getReaction = (r) => (<Reaction emoteId={ r.key } emote={ r.emote } count={ r.count } key={ r.key } />);
 
-    const visibleReactions = reactions.slice(0, maxReactions).map(getReaction);
+    const visibleReactions = reactions.slice(START, maxReactions).map(getReaction);
     const extraReactions = reactions.slice(maxReactions).map(getReaction);
     return (
         <aside>
@@ -28,6 +32,6 @@ const Reactions = (props) => {
     );
 };
 Reactions.propTypes = {
-    reactions: React.PropTypes.arrayOf(ReactionShape).isRequired
+    reactions: PropTypes.arrayOf(ReactionShape).isRequired
 };
 export default Reactions;

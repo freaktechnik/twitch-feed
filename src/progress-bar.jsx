@@ -1,5 +1,6 @@
 import React from 'react';
 import Mprogress from 'mprogress/build/js/mprogress';
+import PropTypes from 'prop-types';
 
 
 export default class ProgressBar extends React.Component {
@@ -7,16 +8,16 @@ export default class ProgressBar extends React.Component {
         super(props);
         this.progress = new Mprogress({
             template: this.props.template,
-            parent: "#" + this.props.parentId,
+            parent: `#${this.props.parentId}`,
             start: this.props.running
         });
     }
 
     static get propTypes() {
         return {
-            running: React.PropTypes.bool,
-            parentId: React.PropTypes.string,
-            template: React.PropTypes.number
+            running: PropTypes.bool,
+            parentId: PropTypes.string,
+            template: PropTypes.number
         };
     }
 
@@ -33,10 +34,12 @@ export default class ProgressBar extends React.Component {
     }
 
     render() {
-        if(this.props.running)
+        if(this.props.running) {
             this.progress.start();
-        else
+        }
+        else {
             this.progress.end();
+        }
 
         return (
             <div id={ this.props.parentId }></div>
