@@ -16,10 +16,10 @@
         "compat/compat": 2
     },
     "settings": {
-        "import/resolver": "webpack"
-    },
-    "globals": {
-        "fetch": false
+        "import/resolver": "webpack",
+        "polyfills": [
+            "fetch"
+        ]
     },
     "extends": [
         "plugin:freaktechnik/browser",
