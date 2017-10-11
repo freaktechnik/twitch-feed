@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "moment": "^2.19.0",
+    "moment": "^2.19.1",
     "mprogress": "^0.1.1",
     "muicss": "^0.9.8",
     "prop-types": "^15.6.0",
