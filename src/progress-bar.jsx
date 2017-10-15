@@ -4,15 +4,6 @@ import PropTypes from 'prop-types';
 
 
 export default class ProgressBar extends React.Component {
-    constructor(props) {
-        super(props);
-        this.progress = new Mprogress({
-            template: this.props.template,
-            parent: `#${this.props.parentId}`,
-            start: this.props.running
-        });
-    }
-
     static get propTypes() {
         return {
             running: PropTypes.bool,
@@ -27,6 +18,15 @@ export default class ProgressBar extends React.Component {
             parentId: "progress",
             running: false
         };
+    }
+
+    constructor(props) {
+        super(props);
+        this.progress = new Mprogress({
+            template: this.props.template,
+            parent: `#${this.props.parentId}`,
+            start: this.props.running
+        });
     }
 
     componentWillUnmount() {

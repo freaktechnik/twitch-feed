@@ -7,6 +7,13 @@ import PropTypes from 'prop-types';
 import { getFeed } from './twitch-api';
 
 export default class Page extends React.Component {
+    static get propTypes() {
+        return {
+            pollInterval: PropTypes.number.isRequired,
+            title: PropTypes.string.isRequired
+        };
+    }
+
     constructor(props) {
         super(props);
         this.handleKeypress = this.handleKeypress.bind(this);
@@ -29,13 +36,6 @@ export default class Page extends React.Component {
         setInterval(() => {
             this.refresh(this.state.loadingUsername);
         }, this.props.pollInterval);
-    }
-
-    static get propTypes() {
-        return {
-            pollInterval: PropTypes.number.isRequired,
-            title: PropTypes.string.isRequired
-        };
     }
 
     componentDidMount() {
