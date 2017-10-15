@@ -1,30 +1,16 @@
 {
     "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2017,
-        "sourceType": "module"
+        "ecmaVersion": 2017
     },
-    "plugins": [
-        "react",
-        "compat",
-        "import"
-    ],
     "rules": {
-        "one-var": 0,
-        "compat/compat": 2
+        "one-var": 0
     },
     "settings": {
-        "import/resolver": "webpack",
         "polyfills": [
             "fetch"
         ]
     },
     "extends": [
-        "plugin:freaktechnik/browser",
-        "plugin:react/recommended",
-        "plugin:import/errors",
-        "plugin:import/warnings"
+        "@freaktechnik/eslint-config-react"
     ]
 }

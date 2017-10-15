@@ -4,13 +4,16 @@ import Mention from './mention.jsx';
 const NO_RESULT = -1;
 const START = 0;
 /**
+ * @typedef {Object} ReactNode
+ */
+/**
  * This converts @name into a link to name's channel. However usually those are
  * mentions of the Twitter usernames, which sometimes don't match up. In a perfect
  * world, Twitch would add some magic to fix that, but there are no mentions yet
  * in the Twitch world.
  *
- * @param {Array.<ReactNode>} nodes - Nodes to convert mentions to links.
- * @returns {Array.<ReactNode>} Array of nodes now with links instead of text
+ * @param {[ReactNode]} nodes - Nodes to convert mentions to links.
+ * @returns {[ReactNode]} Array of nodes now with links instead of text
  *          for mentions.
  * @todo Fall back to Twitter if twitch user does not exist.
  */
