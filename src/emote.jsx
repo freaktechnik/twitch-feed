@@ -1,5 +1,8 @@
 import React from 'react';
-import { emoteSizes, emoteBaseUrl } from './config.json';
+import {
+    emoteSizes,
+    emoteBaseUrl
+} from './config.json';
 import PropTypes from 'prop-types';
 
 const Emote = (props) => {

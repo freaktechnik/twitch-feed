@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Reaction, ReactionShape } from './reaction.jsx';
+import {
+    Reaction,
+    ReactionShape
+} from './reaction.jsx';
 import ReactionsOverflow from './reactions-overflow.jsx';
 
 import { maxReactions } from './config.json';

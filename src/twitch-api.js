@@ -1,4 +1,7 @@
-import { clientID, followsLimit } from "./config.json";
+import {
+    clientID,
+    followsLimit
+} from "./config.json";
 
 const opts = Object.freeze({
     headers: Object.freeze({
