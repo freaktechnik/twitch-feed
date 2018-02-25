@@ -40,7 +40,7 @@
     "webpack": "^3.11.0"
   },
   "dependencies": {
-    "@freaktechnik/eslint-config-react": "^6.2.0",
+    "@freaktechnik/eslint-config-react": "^6.3.4",
     "babel-polyfill": "^6.26.0",
     "moment": "^2.20.1",
     "mprogress": "^0.1.1",
