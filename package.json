@@ -42,7 +42,7 @@
   "dependencies": {
     "@freaktechnik/eslint-config-react": "^6.2.0",
     "babel-polyfill": "^6.26.0",
-    "moment": "^2.20.1",
+    "moment": "2.20.1",
     "mprogress": "^0.1.1",
     "muicss": "^0.9.36",
     "prop-types": "^15.6.0",
