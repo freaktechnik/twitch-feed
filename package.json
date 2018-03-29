@@ -48,7 +48,7 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-autolink": "^0.2.1",
-    "react-dom": "^16.2.0",
+    "react-dom": "16.2.0",
     "whatwg-fetch": "^2.0.2"
   },
   "stylelint": {
